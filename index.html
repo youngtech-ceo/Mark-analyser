@@ -15,10 +15,180 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body>
+    <!-- Top Bar -->
+    <header class="app-header no-print">
+      <div class="container">
+        <div class="header-inner">
+          <div class="brand">
+            <div class="brand-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                <polyline points="16 7 22 7 22 13"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h1 class="brand-title">MarkPulse</h1>
+              <p class="brand-sub">Personal Mark Analyser</p>
+            </div>
+          </div>
+
+          <nav class="nav-tabs nav-tabs-desktop" aria-label="Primary Navigation">
+            <button type="button" class="nav-btn active" data-tab="overview">Overview</button>
+            <button type="button" class="nav-btn" data-tab="exams">
+              Exams <span class="nav-badge mono" id="navExamCount">0</span>
+            </button>
+            <button type="button" class="nav-btn" data-tab="subjects">Subjects &amp; Matrix</button>
+            <button type="button" class="nav-btn" data-tab="predictor">Predictor</button>
+          </nav>
+
+          <div class="header-actions">
+            <button type="button" class="cloud-pill" id="cloudPillBtn" title="Cloud Sync &amp; Anywhere Access">
+              <span class="status-dot" id="cloudStatusDot"></span>
+              <span class="mono" id="cloudPillLabel">Connecting...</span>
+            </button>
+
+            <button type="button" class="icon-btn" id="settingsBtn" title="Target &amp; Grading Settings" aria-label="Settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 0 1 0 4h-.09c-.66 0-1.25.4-1.51 1z"></path>
+              </svg>
+            </button>
+
+            <button type="button" class="icon-btn" id="themeBtn" title="Toggle Dark / Light Mode" aria-label="Toggle Theme">
+              <span id="themeIconWrap"></span>
+            </button>
+
+            <button type="button" class="btn btn-primary" id="addExamBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Add Exam</span>
+            </button>
+          </div>
+        </div>
+
+        <nav class="nav-tabs-mobile" aria-label="Mobile Navigation">
+          <button type="button" class="nav-btn active" data-tab="overview">Overview</button>
+          <button type="button" class="nav-btn" data-tab="exams">
+            Exams <span class="nav-badge mono" id="navExamCountMobile">0</span>
+          </button>
+          <button type="button" class="nav-btn" data-tab="subjects">Subjects &amp; Matrix</button>
+          <button type="button" class="nav-btn" data-tab="predictor">Predictor</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Container -->
+    <main class="container main-content" id="mainRoot"></main>
+
+    <!-- Add / Edit Exam Modal -->
+    <div class="modal-backdrop hidden no-print" id="examModal">
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="examModalTitle">Add New Exam</h2>
+            <p class="card-subtitle">Set custom total marks per exam or per subject. Syncs automatically to cloud.</p>
+          </div>
+          <button type="button" class="icon-btn" data-close-modal="examModal" aria-label="Close">✕</button>
+        </div>
+        <form id="examForm" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+          <div class="modal-body stack-md">
+            <div class="alert-error hidden" id="examFormError"></div>
+
+            <div class="grid-3">
+              <div>
+                <label class="field-label" for="examNameInput">Exam Name *</label>
+                <input class="input" id="examNameInput" type="text" placeholder="e.g., Mid-Term Examination" required />
+              </div>
+              <div>
+                <label class="field-label" for="examDateInput">Exam Date *</label>
+                <input class="input" id="examDateInput" type="date" required />
+              </div>
+              <div>
+                <label class="field-label" for="examCategoryInput">Category / Term</label>
+                <input class="input" id="examCategoryInput" type="text" list="examCategoriesList" placeholder="Unit Test, Final..." />
+                <datalist id="examCategoriesList"></datalist>
+              </div>
+            </div>
+
+            <div class="mini-box">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;">
+                <div>
+                  <div style="font-size:12px;font-weight:700;">Default Max Marks per Subject</div>
+                  <div style="font-size:11px;color:var(--text-soft);">Set once or customize any subject's total marks below.</div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;" id="quickTotalsWrap"></div>
+              </div>
+            </div>
+
+            <div id="subjectQuickAddWrap" class="hidden" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;"></div>
+
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                <span class="kpi-label" id="subjectsRowHeader">Subjects &amp; Marks</span>
+                <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-soft);cursor:pointer;">
+                  <input type="checkbox" id="allowBonusCheck" />
+                  Allow bonus marks (&gt; total)
+                </label>
+              </div>
+              <datalist id="existingSubjectsDatalist"></datalist>
+              <div id="subjectRowsContainer" class="stack-md"></div>
+              <button type="button" class="btn btn-secondary" id="addSubjectRowBtn" style="width:100%;margin-top:10px;border-style:dashed;">
+                + Add Another Subject
+              </button>
+            </div>
+
+            <div>
+              <label class="field-label" for="examNotesInput">Overall Exam Notes (Optional)</label>
+              <textarea class="textarea" id="examNotesInput" rows="2" placeholder="Reflections, topics to revise, or exam notes..."></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+              <span style="color:var(--text-soft);">Live Total:</span>
+              <strong class="mono" id="liveExamSummaryText">0 / 0 (0.0%)</strong>
+              <span id="liveExamSummaryGrade"></span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button type="button" class="btn btn-secondary" data-close-modal="examModal">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="saveExamSubmitBtn">Save Exam</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Exam Report Card Modal -->
+    <div class="modal-backdrop hidden" id="reportModal">
+      <div class="modal-panel" id="reportModalContent"></div>
+    </div>
+
+    <!-- Cloud Sync & Backup Modal -->
+    <div class="modal-backdrop hidden no-print" id="cloudModal">
+      <div class="modal-panel narrow" id="cloudModalContent"></div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-backdrop hidden no-print" id="settingsModal">
+      <div class="modal-panel narrow" id="settingsModalContent"></div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast hidden no-print" id="toastEl"></div>
+
+    <!-- Libraries (Chart.js + Firebase Compat SDK v11) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="analytics.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
-

@@ -1,38 +1,28 @@
 # MarkPulse — Personal Mark Analyser
 
-A clean, analytical personal exam & mark tracker backed by **Firebase Realtime Database** and **Firebase Authentication** (`yt-web-58043`) so you can record exams, customize total marks per exam or per subject, and inspect your analytics anywhere.
+A clean, zero-build personal exam & mark analyser built with plain **HTML, CSS, and JavaScript** backed by **Firebase Realtime Database** and **Firebase Authentication** (`yt-web-58043`).
 
-## Features
+## Project Files
 
-- **Flexible Exam & Subject Entry**
-  - Add exams with date, category/term, notes, and custom default total marks (`20`, `25`, `30`, `50`, `80`, `100`, or any number).
-  - Customize total marks individually per subject (e.g., Theory out of `80` + Lab out of `30` in the same exam).
-  - Smart subject suggestions from previous exams so subject names stay consistent across your history.
-  - Duplicate exams in one click for recurring tests.
+- `index.html` — Page structure and modals
+- `style.css` — Clean responsive light/dark styling and printable report card layout
+- `analytics.js` — Pure JavaScript analytics, trendline regression, heatmap data, target predictor, and CSV/JSON helpers
+- `app.js` — Firebase cloud sync (Cloud Vault Key & Firebase Account) and UI controller
+- `analytics.test.js` — Unit tests runnable via `node --test analytics.test.js`
+- `vercel.json` & `firebase.json` — Ready-to-deploy static hosting configs (no build step required)
 
-- **Full Analytical Telemetry**
-  - **Overview Dashboard**: Weighted cumulative average, exam peak, strongest vs. focus subject, consistency score (`σ`), pass rate, performance trajectory chart with linear trendline & target line, and auto-computed insights.
-  - **Subjects & Heatmap Matrix**: Subject leaderboard, balance radar chart, per-subject historical trend spotlight, and a color-coded **Subject × Exam** performance matrix.
-  - **What-If Target Predictor**: Calculate exact marks needed in your next exam (overall or per-subject) to reach any target percentage, plus multi-exam recovery estimates.
-  - **Printable Report Cards**: Click any exam for a ranked subject breakdown compared against your personal averages, with Print / Save PDF support.
+## Run Locally
 
-- **Cloud Sync Anywhere**
-  - **Cloud Vault Key**: Instant cross-device sync via Firebase Realtime Database (`?vault=YOUR-KEY` shareable link or Vault Key switcher).
-  - **Firebase Account**: Optional Email/Password or Google Sign-In (`markAnalyser/users/{uid}`).
-  - **Offline-First & Portable**: Local browser cache, JSON backup export/import, and CSV export.
-
-## Local Development
+Open `index.html` directly in your browser or serve the folder with any static server:
 
 ```bash
-npm install
-npm run dev
+npx serve .
 ```
 
-## Build & Test
+## Run Tests
 
 ```bash
-npm test
-npm run build
+node --test analytics.test.js
 ```
 
 ## Firebase Realtime Database Rules
@@ -59,4 +49,3 @@ If Firebase prompts for permission setup, configure your Realtime Database Rules
   }
 }
 ```
-
