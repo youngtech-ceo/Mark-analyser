@@ -786,21 +786,23 @@
       .join('');
 
     const toolbar =
-      '<div class="card" style="padding:14px 16px;">' +
-      '  <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;">' +
-      '    <div style="display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:240px;">' +
-      '      <input class="input input-sm" id="examsSearchInput" type="text" value="' + escapeHtml(state.examsSearch) + '" placeholder="Search exam, subject, or notes..." style="max-width:260px;" />' +
-      '      <select class="select select-sm" id="examsCatSelect" style="width:auto;">' + catOptions + '</select>' +
-      '      <select class="select select-sm" id="examsSortSelect" style="width:auto;">' +
+      '<div class="card exams-toolbar-card">' +
+      '  <div class="exams-toolbar">' +
+      '    <div class="exams-toolbar-filters">' +
+      '      <input class="input input-sm exams-search-input" id="examsSearchInput" type="search" value="' + escapeHtml(state.examsSearch) + '" placeholder="Search exam, subject, or notes..." />' +
+      '      <select class="select select-sm exams-filter-select" id="examsCatSelect">' + catOptions + '</select>' +
+      '      <select class="select select-sm exams-filter-select" id="examsSortSelect">' +
       '        <option value="date-desc"' + (state.examsSort === 'date-desc' ? ' selected' : '') + '>Newest First</option>' +
       '        <option value="date-asc"' + (state.examsSort === 'date-asc' ? ' selected' : '') + '>Oldest First</option>' +
       '        <option value="pct-desc"' + (state.examsSort === 'pct-desc' ? ' selected' : '') + '>Highest % First</option>' +
       '        <option value="pct-asc"' + (state.examsSort === 'pct-asc' ? ' selected' : '') + '>Lowest % First</option>' +
       '      </select>' +
       '    </div>' +
-      '    <div style="display:flex;gap:8px;align-items:center;">' +
-      '      <button type="button" class="chip-btn ' + (state.examsView === 'cards' ? 'active' : '') + '" data-action="exams-view" data-view="cards">Cards</button>' +
-      '      <button type="button" class="chip-btn ' + (state.examsView === 'table' ? 'active' : '') + '" data-action="exams-view" data-view="table">Table</button>' +
+      '    <div class="exams-toolbar-actions">' +
+      '      <div style="display:flex;gap:6px;align-items:center;">' +
+      '        <button type="button" class="chip-btn ' + (state.examsView === 'cards' ? 'active' : '') + '" data-action="exams-view" data-view="cards">Cards</button>' +
+      '        <button type="button" class="chip-btn ' + (state.examsView === 'table' ? 'active' : '') + '" data-action="exams-view" data-view="table">Table</button>' +
+      '      </div>' +
       '      <button type="button" class="btn btn-primary btn-sm" data-action="open-add-exam">+ Add Exam</button>' +
       '    </div>' +
       '  </div>' +
@@ -1790,16 +1792,20 @@
         return (
           '<div class="subject-row-card ' + (invalid ? 'invalid' : '') + '" data-row-id="' + escapeHtml(row.id) + '">' +
           '  <div class="subject-row-grid">' +
-          '    <input class="input input-sm" data-field="name" list="existingSubjectsDatalist" value="' + escapeHtml(row.name) + '" placeholder="Subject ' + (idx + 1) + ' (e.g., Mathematics)" />' +
-          '    <input class="input input-sm mono" data-field="scoredMarks" type="number" min="0" step="any" value="' + escapeHtml(row.scoredMarks) + '" placeholder="Scored" style="font-weight:700;" />' +
-          '    <div style="text-align:center;color:var(--text-faint);font-weight:700;">/</div>' +
-          '    <input class="input input-sm mono" data-field="totalMarks" type="number" min="1" step="any" value="' + escapeHtml(row.totalMarks) + '" placeholder="Total" />' +
-          '    <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;">' +
+          '    <input class="input input-sm subject-row-name" data-field="name" list="existingSubjectsDatalist" value="' + escapeHtml(row.name) + '" placeholder="Subject ' + (idx + 1) + ' (e.g., Mathematics)" />' +
+          '    <input class="input input-sm mono" data-field="scoredMarks" type="number" inputmode="decimal" min="0" step="any" value="' + escapeHtml(row.scoredMarks) + '" placeholder="Scored" style="font-weight:700;" />' +
+          '    <div class="subject-row-slash">/</div>' +
+          '    <input class="input input-sm mono" data-field="totalMarks" type="number" inputmode="decimal" min="1" step="any" value="' + escapeHtml(row.totalMarks) + '" placeholder="Total" />' +
+          '    <div class="subject-row-actions">' +
+          '      <div class="subject-row-score">' +
           (validNums
             ? '<span class="mono" style="font-size:12px;font-weight:700;">' + A.formatPct(pct) + '</span>' + gradeBadgeHtml(grade)
             : '<span style="font-size:12px;color:var(--text-faint);">—</span>') +
-          '      <button type="button" class="btn btn-ghost btn-sm" data-row-action="note" title="Add remark">💬</button>' +
-          '      <button type="button" class="btn btn-ghost btn-sm" data-row-action="remove" title="Remove" ' + (state.draftSubjects.length === 1 ? 'disabled' : '') + '>🗑</button>' +
+          '      </div>' +
+          '      <div style="display:flex;align-items:center;gap:4px;">' +
+          '        <button type="button" class="btn btn-ghost btn-sm" data-row-action="note" title="Add remark">💬</button>' +
+          '        <button type="button" class="btn btn-ghost btn-sm" data-row-action="remove" title="Remove" ' + (state.draftSubjects.length === 1 ? 'disabled' : '') + '>🗑</button>' +
+          '      </div>' +
           '    </div>' +
           '  </div>' +
           (row.showNote
@@ -1852,16 +1858,13 @@
     const totalNum = Number(row.totalMarks);
     const valid = row.scoredMarks !== '' && Number.isFinite(scoredNum) && Number.isFinite(totalNum) && totalNum > 0;
     card.classList.toggle('invalid', !allowBonus && valid && scoredNum > totalNum);
-    const badgeSlot = card.querySelector('.subject-row-grid > div:last-child');
-    if (!badgeSlot) return;
-    const buttons = Array.from(badgeSlot.querySelectorAll('button'));
+    const scoreSlot = card.querySelector('.subject-row-score');
+    if (!scoreSlot) return;
     const pct = valid ? A.calcPercentage(scoredNum, totalNum) : 0;
     const grade = A.getGradeForPercentage(pct, state.store.settings.gradeScale);
-    const leftHtml = valid
+    scoreSlot.innerHTML = valid
       ? '<span class="mono" style="font-size:12px;font-weight:700;">' + A.formatPct(pct) + '</span>' + gradeBadgeHtml(grade)
       : '<span style="font-size:12px;color:var(--text-faint);">—</span>';
-    badgeSlot.innerHTML = leftHtml;
-    buttons.forEach(function (b) { badgeSlot.appendChild(b); });
   }
 
   function updateLiveExamFooter() {
@@ -2009,12 +2012,12 @@
 
     const content = document.getElementById('reportModalContent');
     content.innerHTML =
-      '<div class="modal-header">' +
-      '  <div>' +
-      '    <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text-soft);"><span class="chip">' + escapeHtml(summary.exam.category) + '</span><span class="mono">' + escapeHtml(summary.exam.date) + '</span></div>' +
-      '    <h2 class="modal-title" style="font-size:20px;margin-top:6px;">' + escapeHtml(summary.exam.name) + '</h2>' +
+      '<div class="modal-header modal-header-report">' +
+      '  <div style="min-width:0;flex:1 1 200px;">' +
+      '    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--text-soft);"><span class="chip">' + escapeHtml(summary.exam.category) + '</span><span class="mono">' + escapeHtml(summary.exam.date) + '</span></div>' +
+      '    <h2 class="modal-title" style="font-size:20px;margin-top:6px;word-break:break-word;">' + escapeHtml(summary.exam.name) + '</h2>' +
       '  </div>' +
-      '  <div class="no-print" style="display:flex;gap:6px;">' +
+      '  <div class="no-print report-header-actions">' +
       '    <button type="button" class="btn btn-secondary btn-sm" id="printReportBtn">🖨 Print / PDF</button>' +
       '    <button type="button" class="btn btn-primary btn-sm" id="editFromReportBtn">Edit</button>' +
       '    <button type="button" class="icon-btn" data-close-modal="reportModal">✕</button>' +
@@ -2091,8 +2094,8 @@
         '</div>' +
         '<form id="switchVaultForm" class="stack-md" style="margin-top:14px;">' +
         '  <label class="field-label" for="vaultKeyInput">Switch to or Create a Custom Vault Key</label>' +
-        '  <div style="display:flex;flex-wrap:wrap;gap:8px;">' +
-        '    <input class="input mono" id="vaultKeyInput" type="text" value="' + escapeHtml(state.vaultKey) + '" style="flex:1;min-width:180px;text-transform:uppercase;" />' +
+        '  <div class="vault-switch-row">' +
+        '    <input class="input mono vault-key-input" id="vaultKeyInput" type="text" value="' + escapeHtml(state.vaultKey) + '" />' +
         '    <button type="button" class="btn btn-secondary" id="genVaultBtn">Generate New</button>' +
         '    <button type="submit" class="btn btn-primary">Connect Vault</button>' +
         '  </div>' +
@@ -2377,7 +2380,7 @@
       const scaleHtml = draftScale
         .map(function (rule, idx) {
           return (
-            '<div style="display:grid;grid-template-columns:1fr auto 90px;gap:10px;align-items:center;border:1px solid var(--border);border-radius:10px;padding:8px 10px;">' +
+            '<div class="grade-scale-row">' +
             '  <input class="input input-sm" data-scale-idx="' + idx + '" data-scale-field="label" value="' + escapeHtml(rule.label) + '" style="font-weight:700;" />' +
             '  <span style="font-size:11px;color:var(--text-soft);">Min % ≥</span>' +
             '  <input class="input input-sm mono" data-scale-idx="' + idx + '" data-scale-field="minPercentage" type="number" min="0" max="100" value="' + rule.minPercentage + '" style="text-align:right;font-weight:700;" />' +
@@ -2529,3 +2532,4 @@
 
   init();
 })();
+

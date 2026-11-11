@@ -98,3 +98,4 @@ test('exportExamsToCSV and sanitizeImportedExams work cleanly', () => {
   assert.ok(csv.includes('"Chemistry, Organic"'));
   assert.ok(csv.includes('88.00%'));
 });
+

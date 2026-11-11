@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>MarkPulse — Personal Mark Analyser</title>
     <link
       rel="icon"
@@ -66,21 +69,32 @@
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
-              <span>Add Exam</span>
+              <span>Add<span class="hide-xs"> Exam</span></span>
             </button>
           </div>
         </div>
 
-        <nav class="nav-tabs-mobile" aria-label="Mobile Navigation">
-          <button type="button" class="nav-btn active" data-tab="overview">Overview</button>
-          <button type="button" class="nav-btn" data-tab="exams">
-            Exams <span class="nav-badge mono" id="navExamCountMobile">0</span>
-          </button>
-          <button type="button" class="nav-btn" data-tab="subjects">Subjects &amp; Matrix</button>
-          <button type="button" class="nav-btn" data-tab="predictor">Predictor</button>
-        </nav>
       </div>
     </header>
+
+    <nav class="nav-tabs-mobile no-print" aria-label="Mobile Navigation">
+      <button type="button" class="nav-btn active" data-tab="overview">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+        <span>Overview</span>
+      </button>
+      <button type="button" class="nav-btn" data-tab="exams">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        <span>Exams <span class="nav-badge mono" id="navExamCountMobile">0</span></span>
+      </button>
+      <button type="button" class="nav-btn" data-tab="subjects">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        <span>Subjects<span class="hide-xs"> &amp; Matrix</span></span>
+      </button>
+      <button type="button" class="nav-btn" data-tab="predictor">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+        <span>Predictor</span>
+      </button>
+    </nav>
 
     <!-- Main Dynamic Container -->
     <main class="container main-content" id="mainRoot"></main>
